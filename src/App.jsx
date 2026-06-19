@@ -25,7 +25,7 @@ const C = {
 const PIE_COLORS = [C.cyan, "#3DCFBD", "#2AA898", "#1D8A7E", "#5CEBD880", "#A0F0E8", "#0D6B62"];
 
 // ─── Commure logo SVG ─────────────
-function CommureLogo({ size = 150 }) {
+function CommureLogo({ size = 40 }) {
   return <img src="/commure-logo.svg" height={size} alt="Commure" style={{filter: "invert(1)"}} />;
 }
 
@@ -266,7 +266,7 @@ function UploadScreen({ onFile, error }) {
     }}>
       {/* Logo + wordmark */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48 }}>
-        <CommureLogo size={36} />
+        <CommureLogo size={48} />
         <span style={{
           marginLeft: 8, fontSize: 11, color: C.cyan,
           border: `1px solid ${C.cyan}`, borderRadius: 4,
@@ -275,7 +275,7 @@ function UploadScreen({ onFile, error }) {
       </div>
 
       <h1 style={{ fontSize: 32, fontWeight: 700, color: C.white, marginBottom: 10, textAlign: "center", letterSpacing: "-0.5px" }}>
-        Income Statement Reporter
+        Income Statement Analysis 
       </h1>
       <p style={{ color: C.gray2, fontSize: 15, marginBottom: 48, textAlign: "center", maxWidth: 420 }}>
         Drop in a NetSuite Income Statement Detail export and get an AI-powered reporting package in seconds.
