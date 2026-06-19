@@ -25,8 +25,8 @@ const C = {
 const PIE_COLORS = [C.cyan, "#3DCFBD", "#2AA898", "#1D8A7E", "#5CEBD880", "#A0F0E8", "#0D6B62"];
 
 // ─── Commure logo SVG ─────────────
-function CommureLogo({ size = 28 }) {
-  return <img src="/commure-logo.svg" height={size} alt="Commure" />;
+function CommureLogo({ size = 32 }) {
+  return <img src="/commure-logo.svg" height={size} alt="Commure" style={{filter: "invert(1)"}} />;
 }
 
 // ─── CSV Parser ────────────────────────────────────────────────────────────
@@ -267,7 +267,6 @@ function UploadScreen({ onFile, error }) {
       {/* Logo + wordmark */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48 }}>
         <CommureLogo size={36} />
-        <span style={{ fontSize: 22, fontWeight: 600, color: C.white, letterSpacing: "-0.5px" }}>commure</span>
         <span style={{
           marginLeft: 8, fontSize: 11, color: C.cyan,
           border: `1px solid ${C.cyan}`, borderRadius: 4,
@@ -385,7 +384,6 @@ function Dashboard({ f, commentary, onReset }) {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <CommureLogo size={26} />
-          <span style={{ fontSize: 16, fontWeight: 600, color: C.white }}>commure</span>
           <span style={{ color: C.border2, marginLeft: 4 }}>/</span>
           <span style={{ fontSize: 14, color: C.gray2 }}>Finance Reporter</span>
         </div>
