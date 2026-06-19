@@ -24,19 +24,9 @@ const C = {
 
 const PIE_COLORS = [C.cyan, "#3DCFBD", "#2AA898", "#1D8A7E", "#5CEBD880", "#A0F0E8", "#0D6B62"];
 
-// ─── Commure logo SVG (the circular "C" mark from their site) ─────────────
+// ─── Commure logo SVG ─────────────
 function CommureLogo({ size = 28 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
-      <circle cx="20" cy="20" r="19" stroke={C.cyan} strokeWidth="2" fill="none" opacity="0.25" />
-      <circle cx="20" cy="20" r="12" stroke={C.cyan} strokeWidth="2" fill="none" opacity="0.5" />
-      <path
-        d="M28 20a8 8 0 1 1-8-8"
-        stroke={C.cyan} strokeWidth="2.5" strokeLinecap="round" fill="none"
-      />
-      <circle cx="20" cy="12" r="2" fill={C.cyan} />
-    </svg>
-  );
+  return <img src="/commure-logo.png" height={size} alt="Commure" />;
 }
 
 // ─── CSV Parser ────────────────────────────────────────────────────────────
