@@ -25,7 +25,7 @@ const C = {
 const PIE_COLORS = [C.cyan, "#3DCFBD", "#2AA898", "#1D8A7E", "#5CEBD880", "#A0F0E8", "#0D6B62"];
 
 // ─── Commure logo SVG ─────────────
-function CommureLogo({ size = 70 }) {
+function CommureLogo({ size = 150 }) {
   return <img src="/commure-logo.svg" height={size} alt="Commure" style={{filter: "invert(1)"}} />;
 }
 
