@@ -6,13 +6,13 @@ import {
 
 // ─── Commure brand tokens ──────────────────────────────────────────────────
 const C = {
-  bg:       "#0A0A0A",   // site background
-  surface:  "#111111",   // card surface
-  surface2: "#1A1A1A",   // elevated surface
-  border:   "#222222",   // subtle border
-  border2:  "#2E2E2E",   // stronger border
-  cyan:     "#5CEBD8",   // primary accent — from footer "LET'S TALK" button
-  cyanDim:  "#3DCFBD",   // pressed/hover state
+  bg:       "#0A0A0A",
+  surface:  "#111111",
+  surface2: "#1A1A1A",
+  border:   "#222222",
+  border2:  "#2E2E2E",
+  cyan:     "#5CEBD8",
+  cyanDim:  "#3DCFBD",
   cyanGlow: "rgba(92,235,216,0.12)",
   white:    "#FFFFFF",
   gray1:    "#F0F0F0",
@@ -24,10 +24,56 @@ const C = {
 
 const PIE_COLORS = [C.cyan, "#3DCFBD", "#2AA898", "#1D8A7E", "#5CEBD880", "#A0F0E8", "#0D6B62"];
 
-// ─── Commure logo SVG ─────────────
+// ─── Commure logo ─────────────────────────────────────────────────────────
 function CommureLogo({ size = 40 }) {
   return <img src="/commure-logo.svg" height={size} alt="Commure" style={{filter: "invert(1)"}} />;
 }
+
+// ─── Pre-built demo data (from NetSuite CSV) ─────────────────────────
+const DEMO_FINANCIALS = {
+  company: "Commure, Inc.",
+  period: "From Feb 2026 to Jul 2026",
+  total_revenue: "$53.9M",
+  total_cos: "$31.6M",
+  gross_profit: "$22.2M",
+  gross_margin_pct: "41.3%",
+  total_opex: "$23.7M",
+  operating_income: "($1.4M)",
+  other_income_net: "($192K)",
+  net_income: "($1.6M)",
+  revenue_streams: [
+    { name: "Subscription",      amount: "$40.9M", raw: 40880125 },
+    { name: "Pharmacy",          amount: "$7.8M",  raw: 7796742  },
+    { name: "Support Services",  amount: "$4.8M",  raw: 4795677  },
+    { name: "Professional Svc",  amount: "$854K",  raw: 854381   },
+    { name: "Hardware",          amount: "$716K",  raw: 716072   },
+    { name: "Other Revenue",     amount: "$444K",  raw: 443974   },
+  ],
+  cos_items: [
+    { name: "Cost of Revenue Allocations", amount: "$25.6M", raw: 25588678 },
+    { name: "Pharmacy COGS",               amount: "$6.0M",  raw: 6028374  },
+    { name: "Hosting & Software",          amount: "$11",    raw: 11       },
+  ],
+  opex_items: [
+    { name: "Technology",       amount: "$11.9M", raw: 11919362 },
+    { name: "D&A",              amount: "$11.6M", raw: 11594832 },
+    { name: "Professional Svc", amount: "$7.6M",  raw: 7612007  },
+    { name: "People",           amount: "$6.6M",  raw: 6617096  },
+    { name: "Marketing",        amount: "$4.1M",  raw: 4072328  },
+    { name: "Other G&A",        amount: "$3.8M",  raw: 3818382  },
+    { name: "Travel & Ent.",    amount: "$2.5M",  raw: 2486698  },
+    { name: "Facilities",       amount: "$753K",  raw: 753223   },
+  ],
+  _raw: { rev: 53858268, gp: 22241204, opex: 23675952, net: -1633704 },
+};
+
+const DEMO_COMMENTARY = `Revenue for the period ending July 2026 reached $53.9M, led by Subscription revenue of $40.9M representing 76% of total revenue. Pharmacy contributed $7.8M (14%), followed by Support Services at $4.8M (9%). The revenue mix reflects Commure's SaaS-first model with meaningful diversification across care delivery channels, demonstrating the platform's growing adoption across health system customers.
+
+Gross profit of $22.2M represents a 41.3% gross margin on total revenue. Cost of Sales of $31.6M is dominated by cost-of-revenue allocations of $25.6M, which includes technology infrastructure and personnel costs allocated to revenue-generating functions. Pharmacy COGS of $6.0M reflects direct product costs in that segment, and management should continue monitoring pharmacy margin trends as volume scales in the second half of 2026.
+
+Operating expenses of $23.7M are concentrated in Technology ($11.9M) and Depreciation & Amortization ($11.6M), together comprising approximately 98% of total OpEx. Technology spend reflects significant investment in cloud infrastructure, software licensing, and royalties to support the platform at scale. Professional Services expense of $7.6M remains elevated, largely reflecting legal and advisory fees associated with ongoing corporate activity and M&A integration costs.
+
+The business generated an operating loss of approximately $1.4M for the period, with net Other charges of $192K resulting in a net loss of $1.6M — consistent with a growth-stage profile investing heavily in platform and infrastructure. Management focus for H2 2026 should center on subscription revenue retention and expansion, gross margin improvement in the Pharmacy segment, and OpEx leverage as headcount investments normalize and integration costs decline.`;
 
 // ─── CSV Parser ────────────────────────────────────────────────────────────
 function parseNetSuiteCSV(text) {
@@ -76,22 +122,22 @@ function parseNetSuiteCSV(text) {
     return n < 0 ? `(${s})` : s;
   }
 
-  const gp   = parseAmt(findTotal("Gross Profit"));
-  const rev  = parseAmt(findTotal("Total - Income"));
-  const gm   = rev ? (gp / rev * 100).toFixed(1) + "%" : "—";
-  const opex = parseAmt(findTotal("Total - Expense"));
-  const opInc = gp - opex;
+  const gp      = parseAmt(findTotal("Gross Profit"));
+  const rev     = parseAmt(findTotal("Total - Income"));
+  const gm      = rev ? (gp / rev * 100).toFixed(1) + "%" : "—";
+  const opex    = parseAmt(findTotal("Total - Expense"));
+  const opInc   = gp - opex;
   const otherInc = parseAmt(findTotal("Total - Other Income"));
   const otherExp = parseAmt(findTotal("Total - Other Expense"));
-  const net  = opInc + otherInc - otherExp;
+  const net     = opInc + otherInc - otherExp;
 
   const revenueStreams = [
-    { name: "Subscription",        key: "Total - 42000 - Subscription Revenue (Parent)" },
-    { name: "Pharmacy",            key: "Total - 48000 - Pharmacy Revenue" },
-    { name: "Support Services",    key: "Total - 45000 - Support Services Revenue (Parent)" },
-    { name: "Professional Svc",    key: "Total - 41100 - Professional Service Revenue (Parent)" },
-    { name: "Hardware",            key: "Total - 47000 - Hardware Revenue (Parent)" },
-    { name: "Other Revenue",       key: "Total - 49000 - Other Revenue (Parent)" },
+    { name: "Subscription",     key: "Total - 42000 - Subscription Revenue (Parent)" },
+    { name: "Pharmacy",         key: "Total - 48000 - Pharmacy Revenue" },
+    { name: "Support Services", key: "Total - 45000 - Support Services Revenue (Parent)" },
+    { name: "Professional Svc", key: "Total - 41100 - Professional Service Revenue (Parent)" },
+    { name: "Hardware",         key: "Total - 47000 - Hardware Revenue (Parent)" },
+    { name: "Other Revenue",    key: "Total - 49000 - Other Revenue (Parent)" },
   ].map(s => ({ name: s.name, amount: fmt(parseAmt(findTotal(s.key))), raw: parseAmt(findTotal(s.key)) }))
    .filter(s => s.raw > 0);
 
@@ -103,14 +149,14 @@ function parseNetSuiteCSV(text) {
    .filter(i => i.raw > 0);
 
   const opexItems = [
-    { name: "Technology",        key: "Total - 66000 - Technology" },
-    { name: "D&A",               key: "Total - 69000 - Depreciation & Amortization" },
-    { name: "Professional Svc",  key: "Total - 63000 - Professional Services" },
-    { name: "People",            key: "Total - 61000 - People" },
-    { name: "Marketing",         key: "Total - 65000 - Marketing Expenses" },
-    { name: "Other G&A",         key: "Total - 68000 - Other G&A" },
-    { name: "Travel & Ent.",     key: "Total - 62000 - Travel & Entertainment Expenses" },
-    { name: "Facilities",        key: "Total - 67000 - Facilities Expenses" },
+    { name: "Technology",       key: "Total - 66000 - Technology" },
+    { name: "D&A",              key: "Total - 69000 - Depreciation & Amortization" },
+    { name: "Professional Svc", key: "Total - 63000 - Professional Services" },
+    { name: "People",           key: "Total - 61000 - People" },
+    { name: "Marketing",        key: "Total - 65000 - Marketing Expenses" },
+    { name: "Other G&A",        key: "Total - 68000 - Other G&A" },
+    { name: "Travel & Ent.",    key: "Total - 62000 - Travel & Entertainment Expenses" },
+    { name: "Facilities",       key: "Total - 67000 - Facilities Expenses" },
   ].map(i => ({ name: i.name, amount: fmt(parseAmt(findTotal(i.key))), raw: parseAmt(findTotal(i.key)) }))
    .filter(i => i.raw !== 0).sort((a, b) => b.raw - a.raw);
 
@@ -135,11 +181,15 @@ function parseNetSuiteCSV(text) {
   };
 }
 
-// ─── AI Commentary ─────────────────────────────────────────────────────────
+// ─── AI Commentary (live mode only) ───────────────────────────────────────
 async function generateCommentary(f) {
   const resp = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: 1000,
@@ -169,17 +219,15 @@ Professional, specific, board-ready tone. No bullets. Paragraphs only.`,
   return data.content?.[0]?.text || "Commentary unavailable.";
 }
 
-// ─── Sub-components ─────────────────────────────────────────────────────────
+// ─── Sub-components ────────────────────────────────────────────────────────
 function KpiCard({ label, value, positive }) {
   const isNeg = String(value).startsWith("(");
   const color = positive === undefined ? C.white : (isNeg ? C.red : C.green);
   return (
     <div style={{
       flex: 1, minWidth: 150,
-      background: C.surface,
-      border: `1px solid ${C.border2}`,
-      borderRadius: 10,
-      padding: "18px 20px",
+      background: C.surface, border: `1px solid ${C.border2}`,
+      borderRadius: 10, padding: "18px 20px",
       display: "flex", flexDirection: "column", gap: 6,
     }}>
       <span style={{ fontSize: 11, color: C.gray2, letterSpacing: "0.06em", textTransform: "uppercase" }}>{label}</span>
@@ -204,8 +252,7 @@ function DataTable({ cols, rows, totalRow }) {
         <tr>
           {cols.map((c, i) => (
             <th key={i} style={{
-              padding: "8px 12px",
-              textAlign: i === 0 ? "left" : "right",
+              padding: "8px 12px", textAlign: i === 0 ? "left" : "right",
               color: C.gray3, fontWeight: 500, fontSize: 11,
               borderBottom: `1px solid ${C.border2}`,
               letterSpacing: "0.05em", textTransform: "uppercase",
@@ -218,8 +265,7 @@ function DataTable({ cols, rows, totalRow }) {
           <tr key={i} style={{ borderBottom: `1px solid ${C.border}` }}>
             {row.map((cell, j) => (
               <td key={j} style={{
-                padding: "9px 12px",
-                textAlign: j === 0 ? "left" : "right",
+                padding: "9px 12px", textAlign: j === 0 ? "left" : "right",
                 color: j === 0 ? C.gray1 : C.white,
                 fontVariantNumeric: "tabular-nums",
               }}>{cell}</td>
@@ -230,8 +276,7 @@ function DataTable({ cols, rows, totalRow }) {
           <tr style={{ borderTop: `1px solid ${C.border2}` }}>
             {totalRow.map((cell, j) => (
               <td key={j} style={{
-                padding: "10px 12px",
-                textAlign: j === 0 ? "left" : "right",
+                padding: "10px 12px", textAlign: j === 0 ? "left" : "right",
                 color: j === 0 ? C.gray1 : C.cyan,
                 fontWeight: 700, fontVariantNumeric: "tabular-nums",
               }}>{cell}</td>
@@ -248,13 +293,43 @@ const CustomTooltip = ({ active, payload, label }) => {
   return (
     <div style={{ background: C.surface2, border: `1px solid ${C.border2}`, borderRadius: 8, padding: "10px 14px", fontSize: 13 }}>
       <div style={{ color: C.gray2, marginBottom: 4 }}>{label}</div>
-      <div style={{ color: C.cyan, fontWeight: 700 }}>{payload[0].value >= 1 ? `$${payload[0].value.toFixed(1)}M` : `$${(payload[0].value * 1000).toFixed(0)}K`}</div>
+      <div style={{ color: C.cyan, fontWeight: 700 }}>
+        {payload[0].value >= 1 ? `$${payload[0].value.toFixed(1)}M` : `$${(payload[0].value * 1000).toFixed(0)}K`}
+      </div>
     </div>
   );
 };
 
-// ─── Upload Screen ──────────────────────────────────────────────────────────
-function UploadScreen({ onFile, error }) {
+// ─── Mode Toggle ──────────────────────────────────────────────────────────
+function ModeToggle({ mode, onChange }) {
+  return (
+    <div style={{
+      display: "flex", alignItems: "center",
+      background: C.surface, border: `1px solid ${C.border2}`,
+      borderRadius: 10, padding: 4, gap: 4,
+    }}>
+      {["demo", "live"].map(m => (
+        <button
+          key={m}
+          onClick={() => onChange(m)}
+          style={{
+            padding: "7px 18px", borderRadius: 7, border: "none",
+            fontSize: 13, fontWeight: 600, cursor: "pointer",
+            background: mode === m ? C.cyan : "transparent",
+            color: mode === m ? C.bg : C.gray2,
+            transition: "all 0.15s ease",
+            textTransform: "capitalize",
+          }}
+        >
+          {m === "demo" ? "🎬 Demo" : "⚡ Live"}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─── Upload Screen ────────────────────────────────────────────────────────
+function UploadScreen({ onFile, onDemoLoad, error, mode, onModeChange }) {
   const ref = useRef(null);
   const [dragging, setDragging] = useState(false);
 
@@ -264,7 +339,7 @@ function UploadScreen({ onFile, error }) {
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       padding: 32,
     }}>
-      {/* Logo + wordmark */}
+      {/* Logo */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48 }}>
         <CommureLogo size={48} />
         <span style={{
@@ -275,41 +350,87 @@ function UploadScreen({ onFile, error }) {
       </div>
 
       <h1 style={{ fontSize: 32, fontWeight: 700, color: C.white, marginBottom: 10, textAlign: "center", letterSpacing: "-0.5px" }}>
-        Income Statement Analysis 
+        Income Statement Analysis
       </h1>
-      <p style={{ color: C.gray2, fontSize: 15, marginBottom: 48, textAlign: "center", maxWidth: 420 }}>
+      <p style={{ color: C.gray2, fontSize: 15, marginBottom: 32, textAlign: "center", maxWidth: 420 }}>
         Drop in a NetSuite Income Statement Detail export and get an AI-powered reporting package in seconds.
       </p>
 
-      {/* Drop zone */}
-      <div
-        onClick={() => ref.current?.click()}
-        onDragOver={e => { e.preventDefault(); setDragging(true); }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={e => { e.preventDefault(); setDragging(false); onFile(e.dataTransfer.files[0]); }}
-        style={{
-          width: "100%", maxWidth: 440,
-          border: `2px dashed ${dragging ? C.cyan : C.border2}`,
-          borderRadius: 14,
-          background: dragging ? C.cyanGlow : C.surface,
-          padding: "48px 32px",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
-          cursor: "pointer",
-          transition: "all 0.15s ease",
-        }}
-      >
-        <div style={{ fontSize: 40 }}>📊</div>
-        <div style={{ fontWeight: 600, color: C.white, fontSize: 16 }}>Drop your NetSuite CSV here</div>
-        <div style={{ color: C.gray3, fontSize: 13 }}>or click to browse</div>
-        <div style={{
-          marginTop: 12, fontSize: 12, color: C.gray3,
-          background: C.surface2, borderRadius: 8,
-          padding: "8px 16px", border: `1px solid ${C.border}`,
-        }}>
-          Income Statement Detail export (.csv)
-        </div>
-        <input ref={ref} type="file" accept=".csv" style={{ display: "none" }} onChange={e => onFile(e.target.files[0])} />
+      {/* Mode toggle */}
+      <div style={{ marginBottom: 32 }}>
+        <ModeToggle mode={mode} onChange={onModeChange} />
       </div>
+
+      {/* Mode description */}
+      <div style={{
+        marginBottom: 24, fontSize: 13, color: C.gray3, textAlign: "center",
+        background: C.surface, border: `1px solid ${C.border}`,
+        borderRadius: 8, padding: "10px 20px", maxWidth: 440,
+      }}>
+        {mode === "demo"
+          ? "🎬 Demo mode — uses pre-loaded sample data. No API key needed."
+          : "⚡ Live mode — parses your CSV and generates real AI commentary."}
+      </div>
+
+      {mode === "demo" ? (
+        // Demo mode — show a button to load sample data
+        <div style={{
+          width: "100%", maxWidth: 440,
+          border: `2px dashed ${C.cyan}`,
+          borderRadius: 14,
+          background: C.cyanGlow,
+          padding: "48px 32px",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 16,
+          cursor: "pointer",
+        }}
+          onClick={onDemoLoad}
+        >
+          <div style={{ fontSize: 40 }}>📊</div>
+          <div style={{ fontWeight: 700, color: C.white, fontSize: 16 }}>Load Sample Income Statement</div>
+          <div style={{ color: C.gray2, fontSize: 13, textAlign: "center" }}>
+            Commure, Inc. · Feb 2026 – Jul 2026
+          </div>
+          <div style={{
+            marginTop: 4,
+            background: C.cyan, color: C.bg,
+            border: "none", borderRadius: 8,
+            padding: "10px 28px", fontSize: 14, fontWeight: 700,
+            cursor: "pointer", letterSpacing: "0.02em",
+          }}>
+            Run Demo →
+          </div>
+        </div>
+      ) : (
+        // Live mode — show file drop zone
+        <div
+          onClick={() => ref.current?.click()}
+          onDragOver={e => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={e => { e.preventDefault(); setDragging(false); onFile(e.dataTransfer.files[0]); }}
+          style={{
+            width: "100%", maxWidth: 440,
+            border: `2px dashed ${dragging ? C.cyan : C.border2}`,
+            borderRadius: 14,
+            background: dragging ? C.cyanGlow : C.surface,
+            padding: "48px 32px",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+          }}
+        >
+          <div style={{ fontSize: 40 }}>📊</div>
+          <div style={{ fontWeight: 600, color: C.white, fontSize: 16 }}>Drop your NetSuite CSV here</div>
+          <div style={{ color: C.gray3, fontSize: 13 }}>or click to browse</div>
+          <div style={{
+            marginTop: 12, fontSize: 12, color: C.gray3,
+            background: C.surface2, borderRadius: 8,
+            padding: "8px 16px", border: `1px solid ${C.border}`,
+          }}>
+            Income Statement Detail export (.csv)
+          </div>
+          <input ref={ref} type="file" accept=".csv" style={{ display: "none" }} onChange={e => onFile(e.target.files[0])} />
+        </div>
+      )}
 
       {error && (
         <div style={{
@@ -323,7 +444,7 @@ function UploadScreen({ onFile, error }) {
   );
 }
 
-// ─── Loading Screen ─────────────────────────────────────────────────────────
+// ─── Loading Screen ───────────────────────────────────────────────────────
 function LoadingScreen({ phase }) {
   return (
     <div style={{
@@ -339,7 +460,6 @@ function LoadingScreen({ phase }) {
           {phase === "parsing" ? "Extracting revenue, COGS, and OpEx totals" : "Claude is analyzing your financials"}
         </div>
       </div>
-      {/* Animated dots */}
       <div style={{ display: "flex", gap: 8 }}>
         {[0, 1, 2].map(i => (
           <div key={i} style={{
@@ -358,8 +478,8 @@ function LoadingScreen({ phase }) {
   );
 }
 
-// ─── Dashboard ──────────────────────────────────────────────────────────────
-function Dashboard({ f, commentary, onReset }) {
+// ─── Dashboard ────────────────────────────────────────────────────────────
+function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
   const revTotal = f._raw.rev;
 
   function downloadHTML() {
@@ -388,6 +508,7 @@ function Dashboard({ f, commentary, onReset }) {
           <span style={{ fontSize: 14, color: C.gray2 }}>Finance Reporter</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <ModeToggle mode={mode} onChange={(m) => { onModeChange(m); onReset(); }} />
           <span style={{ fontSize: 12, color: C.gray3 }}>{f.period}</span>
           <button onClick={downloadHTML} style={{
             background: C.cyan, color: C.bg,
@@ -419,16 +540,15 @@ function Dashboard({ f, commentary, onReset }) {
 
         {/* KPI row */}
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
-          <KpiCard label="Total Revenue"    value={f.total_revenue}     />
-          <KpiCard label="Gross Profit"     value={f.gross_profit}      />
-          <KpiCard label="Gross Margin"     value={f.gross_margin_pct}  />
-          <KpiCard label="Total OpEx"       value={f.total_opex}        />
-          <KpiCard label="Net Income"       value={f.net_income}        positive />
+          <KpiCard label="Total Revenue"  value={f.total_revenue}    />
+          <KpiCard label="Gross Profit"   value={f.gross_profit}     />
+          <KpiCard label="Gross Margin"   value={f.gross_margin_pct} />
+          <KpiCard label="Total OpEx"     value={f.total_opex}       />
+          <KpiCard label="Net Income"     value={f.net_income}       positive />
         </div>
 
         {/* Charts row */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 16, marginBottom: 24 }}>
-          {/* Revenue pie */}
           <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "20px 20px 10px" }}>
             <SectionHeader label="Revenue Mix" />
             <ResponsiveContainer width="100%" height={230}>
@@ -440,10 +560,8 @@ function Dashboard({ f, commentary, onReset }) {
                 >
                   {f.revenue_streams.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                 </Pie>
-                <Legend
-                  iconType="circle" iconSize={8}
-                  formatter={v => <span style={{ color: C.gray2, fontSize: 12 }}>{v}</span>}
-                />
+                <Legend iconType="circle" iconSize={8}
+                  formatter={v => <span style={{ color: C.gray2, fontSize: 12 }}>{v}</span>} />
                 <Tooltip
                   contentStyle={{ background: C.surface2, border: `1px solid ${C.border2}`, borderRadius: 8, fontSize: 13 }}
                   labelStyle={{ color: C.gray1 }}
@@ -453,7 +571,6 @@ function Dashboard({ f, commentary, onReset }) {
             </ResponsiveContainer>
           </div>
 
-          {/* OpEx bar */}
           <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "20px 20px 10px" }}>
             <SectionHeader label="OpEx by Category" />
             <ResponsiveContainer width="100%" height={230}>
@@ -472,7 +589,6 @@ function Dashboard({ f, commentary, onReset }) {
 
         {/* Tables row */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
-          {/* Revenue table */}
           <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
             <SectionHeader label="Revenue Breakdown" />
             <DataTable
@@ -485,20 +601,19 @@ function Dashboard({ f, commentary, onReset }) {
             />
           </div>
 
-          {/* P&L summary */}
           <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
             <SectionHeader label="P&L Summary" />
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <tbody>
                 {[
-                  ["Total Revenue",          f.total_revenue,        C.green,  false],
-                  ["Less: Cost of Sales",    `(${f.total_cos})`,     C.red,    false],
-                  ["Gross Profit",           f.gross_profit,         C.cyan,   true ],
-                  ["Gross Margin",           f.gross_margin_pct,     C.cyan,   false, true],
-                  ["Less: OpEx",             `(${f.total_opex})`,    C.red,    false],
-                  ["Operating Income",       f.operating_income,     C.red,    true ],
-                  ["Other Income (Net)",     f.other_income_net,     C.gray2,  false],
-                  ["Net Income (Loss)",      f.net_income,           C.red,    true ],
+                  ["Total Revenue",       f.total_revenue,        C.green, false],
+                  ["Less: Cost of Sales", `(${f.total_cos})`,     C.red,   false],
+                  ["Gross Profit",        f.gross_profit,         C.cyan,  true ],
+                  ["Gross Margin",        f.gross_margin_pct,     C.cyan,  false, true],
+                  ["Less: OpEx",          `(${f.total_opex})`,    C.red,   false],
+                  ["Operating Income",    f.operating_income,     C.red,   true ],
+                  ["Other Income (Net)",  f.other_income_net,     C.gray2, false],
+                  ["Net Income (Loss)",   f.net_income,           C.red,   true ],
                 ].map(([label, val, color, bold, italic], i) => (
                   <tr key={i} style={{ borderBottom: `1px solid ${C.border}` }}>
                     <td style={{ padding: "9px 10px", color: C.gray1, fontWeight: bold ? 600 : 400, fontStyle: italic ? "italic" : "normal", fontSize: italic ? 12 : 13 }}>{label}</td>
@@ -516,13 +631,9 @@ function Dashboard({ f, commentary, onReset }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             {commentary.split("\n\n").filter(p => p.trim()).map((para, i) => (
               <div key={i} style={{
-                background: C.surface2,
-                border: `1px solid ${C.border}`,
-                borderRadius: 10,
-                padding: "16px 18px",
-                fontSize: 13.5,
-                lineHeight: 1.7,
-                color: C.gray1,
+                background: C.surface2, border: `1px solid ${C.border}`,
+                borderRadius: 10, padding: "16px 18px",
+                fontSize: 13.5, lineHeight: 1.7, color: C.gray1,
                 borderLeft: `3px solid ${i % 2 === 0 ? C.cyan : C.border2}`,
               }}>
                 {para.trim()}
@@ -544,7 +655,7 @@ function Dashboard({ f, commentary, onReset }) {
   );
 }
 
-// ─── HTML report builder ────────────────────────────────────────────────────
+// ─── HTML report builder ──────────────────────────────────────────────────
 function buildHTMLReport(f, commentary) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -636,13 +747,22 @@ function buildHTMLReport(f, commentary) {
 </body></html>`;
 }
 
-// ─── Root App ───────────────────────────────────────────────────────────────
+// ─── Root App ─────────────────────────────────────────────────────────────
 export default function App() {
   const [phase, setPhase] = useState("upload");
   const [financials, setFinancials] = useState(null);
   const [commentary, setCommentary] = useState("");
   const [error, setError] = useState("");
+  const [mode, setMode] = useState("demo"); // "demo" | "live"
 
+  // Demo mode — load pre-built data instantly, no API call
+  const handleDemoLoad = useCallback(() => {
+    setFinancials(DEMO_FINANCIALS);
+    setCommentary(DEMO_COMMENTARY);
+    setPhase("done");
+  }, []);
+
+  // Live mode — parse CSV then call API
   const handleFile = useCallback(async (file) => {
     if (!file) return;
     setError("");
@@ -662,9 +782,16 @@ export default function App() {
     }
   }, []);
 
+  const handleReset = () => {
+    setPhase("upload");
+    setFinancials(null);
+    setCommentary("");
+    setError("");
+  };
+
   if (phase === "done" && financials) {
-    return <Dashboard f={financials} commentary={commentary} onReset={() => { setPhase("upload"); setFinancials(null); setCommentary(""); }} />;
+    return <Dashboard f={financials} commentary={commentary} onReset={handleReset} mode={mode} onModeChange={setMode} />;
   }
   if (phase === "parsing" || phase === "analyzing") return <LoadingScreen phase={phase} />;
-  return <UploadScreen onFile={handleFile} error={error} />;
+  return <UploadScreen onFile={handleFile} onDemoLoad={handleDemoLoad} error={error} mode={mode} onModeChange={setMode} />;
 }
