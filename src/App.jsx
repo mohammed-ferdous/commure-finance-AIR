@@ -481,6 +481,7 @@ function LoadingScreen({ phase }) {
 // ─── Dashboard ────────────────────────────────────────────────────────────
 function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
   const revTotal = f._raw.rev;
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
 
   function downloadHTML() {
     const html = buildHTMLReport(f, commentary);
@@ -488,6 +489,19 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
     a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
     a.download = "commure_income_statement.html";
     a.click();
+    setShowDownloadMenu(false);
+  }
+
+  function downloadPDF() {
+    const html = buildHTMLReport(f, commentary);
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.onload = () => {
+      win.focus();
+      win.print();
+      setShowDownloadMenu(false);
+    };
   }
 
   return (
@@ -505,19 +519,58 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <CommureLogo size={26} />
           <span style={{ color: C.border2, marginLeft: 4 }}>/</span>
-          <span style={{ fontSize: 14, color: C.gray2 }}>Finance Reporter</span>
+          <span style={{ fontSize: 14, color: C.gray2 }}>Finance AI</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <ModeToggle mode={mode} onChange={(m) => { onModeChange(m); onReset(); }} />
           <span style={{ fontSize: 12, color: C.gray3 }}>{f.period}</span>
-          <button onClick={downloadHTML} style={{
-            background: C.cyan, color: C.bg,
-            border: "none", borderRadius: 8,
-            padding: "8px 18px", fontSize: 13, fontWeight: 700,
-            cursor: "pointer", letterSpacing: "0.02em",
-          }}>
-            ↓ Download Report
-          </button>
+          {/* Download dropdown */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowDownloadMenu(v => !v)}
+              style={{
+                background: C.cyan, color: C.bg,
+                border: "none", borderRadius: 8,
+                padding: "8px 18px", fontSize: 13, fontWeight: 700,
+                cursor: "pointer", letterSpacing: "0.02em",
+                display: "flex", alignItems: "center", gap: 6,
+              }}
+            >
+              ↓ Download {showDownloadMenu ? "▲" : "▼"}
+            </button>
+            {showDownloadMenu && (
+              <div style={{
+                position: "absolute", top: "calc(100% + 8px)", right: 0,
+                background: C.surface2, border: `1px solid ${C.border2}`,
+                borderRadius: 10, overflow: "hidden", zIndex: 100,
+                minWidth: 180, boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+              }}>
+                <button onClick={downloadHTML} style={{
+                  display: "block", width: "100%", textAlign: "left",
+                  padding: "12px 16px", background: "transparent",
+                  border: "none", color: C.gray1, fontSize: 13,
+                  cursor: "pointer", borderBottom: `1px solid ${C.border}`,
+                  transition: "background 0.1s",
+                }}
+                  onMouseEnter={e => e.target.style.background = C.surface}
+                  onMouseLeave={e => e.target.style.background = "transparent"}
+                >
+                  📄 Download as HTML
+                </button>
+                <button onClick={downloadPDF} style={{
+                  display: "block", width: "100%", textAlign: "left",
+                  padding: "12px 16px", background: "transparent",
+                  border: "none", color: C.gray1, fontSize: 13,
+                  cursor: "pointer", transition: "background 0.1s",
+                }}
+                  onMouseEnter={e => e.target.style.background = C.surface}
+                  onMouseLeave={e => e.target.style.background = "transparent"}
+                >
+                  🖨️ Download as PDF
+                </button>
+              </div>
+            )}
+          </div>
           <button onClick={onReset} style={{
             background: "transparent", color: C.gray2,
             border: `1px solid ${C.border2}`, borderRadius: 8,
@@ -563,8 +616,9 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
                 <Legend iconType="circle" iconSize={8}
                   formatter={v => <span style={{ color: C.gray2, fontSize: 12 }}>{v}</span>} />
                 <Tooltip
-                  contentStyle={{ background: C.surface2, border: `1px solid ${C.border2}`, borderRadius: 8, fontSize: 13 }}
-                  labelStyle={{ color: C.gray1 }}
+                  contentStyle={{ background: C.surface2, border: `1px solid ${C.border2}`, borderRadius: 8, fontSize: 13, color: C.gray1 }}
+                  labelStyle={{ color: C.cyan }}
+                  itemStyle={{ color: C.gray1 }}
                   formatter={v => ["$" + (v / 1e6).toFixed(2) + "M"]}
                 />
               </PieChart>
@@ -645,8 +699,8 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
         {/* Footer */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, paddingBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <CommureLogo size={16} />
-            <span style={{ fontSize: 11, color: C.gray3 }}>Commure Finance AI · Hackathon Demo · {f.period}</span>
+            <CommureLogo size={26} />
+            <span style={{ fontSize: 11, color: C.gray3 }}>Finance AI · Hackathon Demo · {f.period}</span>
           </div>
           <span style={{ fontSize: 11, color: C.gray3 }}>CONFIDENTIAL — Internal Use Only</span>
         </div>
