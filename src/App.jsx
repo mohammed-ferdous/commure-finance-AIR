@@ -748,13 +748,8 @@ function buildHTMLReport(f, commentary) {
 <body>
 <div class="header">
   <div class="logo">
-    <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-      <circle cx="20" cy="20" r="19" stroke="#5CEBD8" stroke-width="2" fill="none" opacity=".25"/>
-      <circle cx="20" cy="20" r="12" stroke="#5CEBD8" stroke-width="2" fill="none" opacity=".5"/>
-      <path d="M28 20a8 8 0 1 1-8-8" stroke="#5CEBD8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-      <circle cx="20" cy="12" r="2" fill="#5CEBD8"/>
-    </svg>
-    commure <span class="badge">Finance AI</span>
+    <img src="https://https://commure-finance-air.vercel.app/commure-logo.svg" height="36" alt="Commure" style="filter:invert(1)" />
+    <span class="badge">Finance AI</span>
   </div>
   <div class="meta">${f.period} &nbsp;·&nbsp; CONFIDENTIAL</div>
 </div>
