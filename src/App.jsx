@@ -205,7 +205,7 @@ Results for ${f.period}:
 Revenue: ${f.revenue_streams.map(s => `${s.name} ${s.amount}`).join(", ")}
 Top OpEx: ${f.opex_items.slice(0, 5).map(i => `${i.name} ${i.amount}`).join(", ")}
 
-Write 4 concise prose paragraphs (3–4 sentences each) covering:
+Write 4 concise prose paragraphs (3-4 sentences each) covering:
 1. Revenue performance and mix
 2. Gross profit and cost of sales
 3. Operating expenses and key drivers
@@ -339,7 +339,6 @@ function UploadScreen({ onFile, onDemoLoad, error, mode, onModeChange }) {
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       padding: 32,
     }}>
-      {/* Logo */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48 }}>
         <CommureLogo size={48} />
         <span style={{
@@ -356,12 +355,10 @@ function UploadScreen({ onFile, onDemoLoad, error, mode, onModeChange }) {
         Drop in a NetSuite Income Statement Detail export and get an AI-powered reporting package in seconds.
       </p>
 
-      {/* Mode toggle */}
       <div style={{ marginBottom: 32 }}>
         <ModeToggle mode={mode} onChange={onModeChange} />
       </div>
 
-      {/* Mode description */}
       <div style={{
         marginBottom: 24, fontSize: 13, color: C.gray3, textAlign: "center",
         background: C.surface, border: `1px solid ${C.border}`,
@@ -373,7 +370,6 @@ function UploadScreen({ onFile, onDemoLoad, error, mode, onModeChange }) {
       </div>
 
       {mode === "demo" ? (
-        // Demo mode — show a button to load sample data
         <div style={{
           width: "100%", maxWidth: 440,
           border: `2px dashed ${C.cyan}`,
@@ -401,7 +397,6 @@ function UploadScreen({ onFile, onDemoLoad, error, mode, onModeChange }) {
           </div>
         </div>
       ) : (
-        // Live mode — show file drop zone
         <div
           onClick={() => ref.current?.click()}
           onDragOver={e => { e.preventDefault(); setDragging(true); }}
@@ -506,7 +501,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh" }}>
-      {/* Top nav */}
       <header style={{
         position: "sticky", top: 0, zIndex: 50,
         background: "rgba(10,10,10,0.92)",
@@ -524,7 +518,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <ModeToggle mode={mode} onChange={(m) => { onModeChange(m); onReset(); }} />
           <span style={{ fontSize: 12, color: C.gray3 }}>{f.period}</span>
-          {/* Download dropdown */}
           <div style={{ position: "relative" }}>
             <button
               onClick={() => setShowDownloadMenu(v => !v)}
@@ -550,7 +543,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
                   padding: "12px 16px", background: "transparent",
                   border: "none", color: C.gray1, fontSize: 13,
                   cursor: "pointer", borderBottom: `1px solid ${C.border}`,
-                  transition: "background 0.1s",
                 }}
                   onMouseEnter={e => e.target.style.background = C.surface}
                   onMouseLeave={e => e.target.style.background = "transparent"}
@@ -561,7 +553,7 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
                   display: "block", width: "100%", textAlign: "left",
                   padding: "12px 16px", background: "transparent",
                   border: "none", color: C.gray1, fontSize: 13,
-                  cursor: "pointer", transition: "background 0.1s",
+                  cursor: "pointer",
                 }}
                   onMouseEnter={e => e.target.style.background = C.surface}
                   onMouseLeave={e => e.target.style.background = "transparent"}
@@ -582,8 +574,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
       </header>
 
       <main style={{ maxWidth: 1160, margin: "0 auto", padding: "28px 24px" }}>
-
-        {/* Page title */}
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: 26, fontWeight: 700, color: C.white, letterSpacing: "-0.5px", marginBottom: 4 }}>
             {f.company} — Income Statement
@@ -591,7 +581,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
           <p style={{ color: C.gray2, fontSize: 14 }}>Reporting period: {f.period} · CONFIDENTIAL</p>
         </div>
 
-        {/* KPI row */}
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
           <KpiCard label="Total Revenue"  value={f.total_revenue}    />
           <KpiCard label="Gross Profit"   value={f.gross_profit}     />
@@ -600,7 +589,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
           <KpiCard label="Net Income"     value={f.net_income}       positive />
         </div>
 
-        {/* Charts row */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 16, marginBottom: 24 }}>
           <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "20px 20px 10px" }}>
             <SectionHeader label="Revenue Mix" />
@@ -641,7 +629,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
           </div>
         </div>
 
-        {/* Tables row */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
           <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
             <SectionHeader label="Revenue Breakdown" />
@@ -679,7 +666,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
           </div>
         </div>
 
-        {/* AI Commentary */}
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
           <SectionHeader label="AI-Generated Management Commentary" />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
@@ -696,7 +682,6 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
           </div>
         </div>
 
-        {/* Footer */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, paddingBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <CommureLogo size={26} />
@@ -715,12 +700,12 @@ function buildHTMLReport(f, commentary) {
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<title>Commure — Income Statement ${f.period}</title>
+<title>Commure Finance AI — Income Statement ${f.period}</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0A0A0A; color: #F0F0F0; -webkit-print-color-adjust: exact; }
   .header { background: #111; border-bottom: 1px solid #222; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
-  .logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: #fff; }
+  .logo { display: flex; align-items: center; gap: 10px; }
   .badge { font-size: 10px; color: #5CEBD8; border: 1px solid #5CEBD8; border-radius: 4px; padding: 2px 8px; letter-spacing: .08em; }
   .meta { font-size: 12px; color: #666; }
   .body { max-width: 1100px; margin: 0 auto; padding: 32px 40px; }
@@ -748,7 +733,7 @@ function buildHTMLReport(f, commentary) {
 <body>
 <div class="header">
   <div class="logo">
-    <img src="https://https://commure-finance-air.vercel.app/commure-logo.svg" height="36" alt="Commure" style="filter:invert(1)" />
+    <img src="https://commure-finance-air.vercel.app/commure-logo.svg" height="36" alt="Commure" style="filter:invert(1)" />
     <span class="badge">Finance AI</span>
   </div>
   <div class="meta">${f.period} &nbsp;·&nbsp; CONFIDENTIAL</div>
@@ -791,7 +776,7 @@ function buildHTMLReport(f, commentary) {
       ${commentary.split("\n\n").filter(p=>p.trim()).map(p=>`<div class="para">${p.trim()}</div>`).join("")}
     </div>
   </div>
-  <div class="footer">Commure Finance AI · Hackathon Demo · ${f.period}</div>
+  <div class="footer">Finance AI · Hackathon Demo · ${f.period}</div>
 </div>
 </body></html>`;
 }
@@ -802,16 +787,14 @@ export default function App() {
   const [financials, setFinancials] = useState(null);
   const [commentary, setCommentary] = useState("");
   const [error, setError] = useState("");
-  const [mode, setMode] = useState("demo"); // "demo" | "live"
+  const [mode, setMode] = useState("demo");
 
-  // Demo mode — load pre-built data instantly, no API call
   const handleDemoLoad = useCallback(() => {
     setFinancials(DEMO_FINANCIALS);
     setCommentary(DEMO_COMMENTARY);
     setPhase("done");
   }, []);
 
-  // Live mode — parse CSV then call API
   const handleFile = useCallback(async (file) => {
     if (!file) return;
     setError("");
