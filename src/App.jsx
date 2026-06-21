@@ -22,7 +22,16 @@ const C = {
   green:    "#4ADE80",
 };
 
-const PIE_COLORS = [C.cyan, "#3DCFBD", "#2AA898", "#1D8A7E", "#5CEBD880", "#A0F0E8", "#0D6B62"];
+const CHART_COLORS = [
+  "#5CEBD8", // cyan — brand primary
+  "#6366F1", // indigo
+  "#F59E0B", // amber
+  "#EC4899", // pink
+  "#3B82F6", // blue
+  "#10B981", // emerald
+  "#F97316", // orange
+  "#A78BFA", // violet
+];
 
 // ─── Commure logo ─────────────────────────────────────────────────────────
 function CommureLogo({ size = 40 }) {
@@ -599,15 +608,18 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
                   cx="42%" cy="50%" outerRadius={90} innerRadius={48}
                   dataKey="value" paddingAngle={2}
                 >
-                  {f.revenue_streams.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                  {f.revenue_streams.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                 </Pie>
                 <Legend iconType="circle" iconSize={8}
                   formatter={v => <span style={{ color: C.gray2, fontSize: 12 }}>{v}</span>} />
                 <Tooltip
                   contentStyle={{ background: C.surface2, border: `1px solid ${C.border2}`, borderRadius: 8, fontSize: 13, color: C.gray1 }}
-                  labelStyle={{ color: C.cyan }}
+                  labelStyle={{ color: C.cyan, fontWeight: 700, marginBottom: 4 }}
                   itemStyle={{ color: C.gray1 }}
-                  formatter={v => ["$" + (v / 1e6).toFixed(2) + "M"]}
+                  formatter={(v, name) => {
+                    const pct = f._raw.rev ? (v / f._raw.rev * 100).toFixed(1) + "%" : "—";
+                    return [`$${(v / 1e6).toFixed(2)}M (${pct})`, name];
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -622,8 +634,20 @@ function Dashboard({ f, commentary, onReset, mode, onModeChange }) {
               >
                 <XAxis type="number" tick={{ fontSize: 11, fill: C.gray3 }} tickFormatter={v => `$${v.toFixed(0)}M`} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: C.gray2 }} width={105} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="value" fill={C.cyan} radius={[0, 4, 4, 0]} opacity={0.85} />
+                <Tooltip
+                  contentStyle={{ background: C.surface2, border: `1px solid ${C.border2}`, borderRadius: 8, fontSize: 13 }}
+                  labelStyle={{ color: C.cyan, fontWeight: 700, marginBottom: 4 }}
+                  itemStyle={{ color: C.gray1 }}
+                  formatter={(v, name, props) => {
+                    const pct = f._raw.opex ? (v / (f._raw.opex / 1e6) * 100).toFixed(1) + "% of OpEx" : "—";
+                    return [`$${v.toFixed(1)}M (${pct})`, props.payload.name];
+                  }}
+                />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]} opacity={0.9}>
+                  {f.opex_items.map((_, i) => (
+                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
